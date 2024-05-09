@@ -1,5 +1,5 @@
 # cmangos-in-docker
-Overview
+## Overview
 The docker image provided by this repository provide a method to install CMaNGOS using docker whilst providing a highly customisable experience using docker environment variables to manage the vast majority of configurations required for a CMaNGOS server. This includes
 
 - Choosing which expansion to install (classic, tbc or wotlk).
