@@ -30,7 +30,7 @@ services:
     environment:
       MARIADB_ROOT_PASSWORD: SecretPassword # IMPORTANT should be set the same as the MARIADB_ROOT_PASSWORD environment variable for the mariadb service
     volumes:
-      - <PATH_TO_YOUR_CLIENT_DATA>:/home/mangos/Client-Data
+      - <PATH_TO_YOUR_CLIENT_DATA>:/home/mangos/Client-Data # <PATH_TO_YOUR_CLIENT_DATA> should be the local path to your WoW client data
       - cmangos_data:/home/mangos
     depends_on:
       mariadb:
