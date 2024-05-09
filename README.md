@@ -1,6 +1,6 @@
 # Overview
 
-## The aim of this repository is to create a docker image that is extensible and highly customisable whilst also making start and maintaining a CMaNGOS server straightforward with very few individual user steps to get up and running. The below list are some of the aims of this project -
+## The aim of this repository is to create a CMaNGOS docker image that is two things - Simple and Highly Customisable allowing you to get up and running quickly with less hassle. The below list are some of the aims of this project -
 
 - Create a simple docker image that requires very little configuration to get a CMaNGOS server up and running.
 - Allow the image to be highly customisable for various use cases by allowing configuration of the image using docker environment variables i.e playerbots configurations etc.
