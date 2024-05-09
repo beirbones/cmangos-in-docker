@@ -1,7 +1,10 @@
 # Overview
 
-The aim of this repository is to create a CMaNGOS docker image that is two things - Simple and Highly Customisable.
-Allowing you to get up and running quickly with less hassle.
+## What is this?
+CMaNGOS in docker.. an emulated World of Warcraft server running inside docker obscuring away the nitty gritty of setting up a CMaNGOS server yourself whilst only requiring very little from the end-user.
+
+## but why?
+Well.. I wanted this for myself first and foremost as other projects I'd seen had heavy dependencies on Windows or were too technical for me to get involved in and had lots of moving parts so I felt I could hopefully make something better and easier to maintain in the long run.. I also like to self host any services I can and being somewhat familiar with docker it made sense to make this monstrosity.
 
 ###  Aim of this project
 
