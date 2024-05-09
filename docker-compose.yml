@@ -1,0 +1,57 @@
+services:
+  mariadb:
+    image: mariadb:11.2.3
+    restart: unless-stopped
+    container_name: mariadb
+    environment:
+      MARIADB_ROOT_PASSWORD: SecretPassword # IMPORTANT should be set the same as the MARIADB_ROOT_PASSWORD environment variable for the cmangos-in-docker service
+    volumes:
+      - mariadb_data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    healthcheck:
+      interval: 30s
+      retries: 3
+      test:
+        [
+          "CMD",
+          "healthcheck.sh",
+          "--su-mysql",
+          "--connect",
+          "--innodb_initialized"
+        ]
+      timeout: 30s
+
+  cmangos-in-docker:
+    image: cmangos-in-docker:latest
+    container_name: cmangos-tbc-in-docker
+    stdin_open: true
+    tty: true
+    environment:
+      MARIADB_ROOT_PASSWORD: SecretPassword # IMPORTANT should be set the same as the MARIADB_ROOT_PASSWORD environment variable for the mariadb service
+    volumes:
+      - <PATH_TO_YOUR_CLIENT_DATA>:/home/mangos/Client-Data
+      - cmangos_data:/home/mangos
+    depends_on:
+      mariadb:
+        condition: service_healthy
+    ports:
+      - "8085:8085"
+      - "3724:3724"
+    healthcheck:
+      interval: 10s
+      retries: 3
+      test:
+        [
+          "CMD",
+          "healthcheck.sh"
+        ]
+      timeout: 30s
+      start_period: 15s
+
+volumes:
+  mariadb_data:
+    name: mariadb_data
+  cmangos_data:
+    name: cmangos_data
+
