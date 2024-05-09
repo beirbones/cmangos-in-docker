@@ -1,7 +1,7 @@
 # Overview
 
 The aim of this repository is to create a CMaNGOS docker image that is two things - Simple and Highly Customisable 
-Allowing you to get up and running quickly with less hassle.
+\nAllowing you to get up and running quickly with less hassle.
 
 ###  Aim of this project
 
