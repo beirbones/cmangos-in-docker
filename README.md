@@ -19,4 +19,4 @@
 - Updating the server to specified core / db commit ids whilst providing a database backup and a full data backup before updating to allow easy restoration.
 - Creating the first account user during startup and setting a GM Level for the account.
 
-[Quick Start](https://github.com/beirbones/cmangos-in-docker/wiki/Quick-Start)
+# [Quick Start](https://github.com/beirbones/cmangos-in-docker/wiki/Quick-Start)
