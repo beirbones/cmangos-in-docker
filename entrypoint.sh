@@ -36,14 +36,6 @@ function echo_orangeinfo () {
    echo -e "\e[1;38;5;208m$1\e[0m"
 }
 function datavalidation () {
-   # if [ "${expansion}" != "tbc" ] || [ "${expansion}" != tbc ] || [ "${expansion}" != "classic" ] || [ "${expansion}" != classic ] || [ "${expansion}" != "wotlk" ] || [ "${expansion}" != wotlk ] 
-    #then
-        #echo_error "Expansion name is incorrect, available options are -:"
-        #echo_error "tbc"
-        #echo_error "classic"
-        #echo_error "wotlk"
-        #echo_error "Please choose one of these options and try again." && exit 1
-    #fi
     if [[ "${mariadb_root_password}" == *[^[:alnum:]]* ]]
     then
         echo_error "mariadb root password cannot contain special characters, please change this and try again." && exit 1
@@ -222,13 +214,6 @@ function install_database () {
     echo_success "Default DB configuration file created"
 
     # Change some default values for the InstallFullDB.config file # Change AHBOT and Playerbots to ENV variable
-   # sed --in-place 's/^MYSQL_HOST=.*$/MYSQL_HOST="'"${mariadb_container_name}"'"/' InstallFullDB.config
-   # sed --in-place 's/^MYSQL_PASSWORD=.*$/MYSQL_PASSWORD="'"${mariadb_mangos_user_password}"'"/' InstallFullDB.config
-    #sed --in-place 's/^MYSQL_USERIP=.*$/MYSQL_USERIP="%"/' InstallFullDB.config
-    #sed --in-place 's\^CORE_PATH=.*$\CORE_PATH="'"${mangos_dir}"'"\' InstallFullDB.config 
-    #sed --in-place 's/^AHBOT=.*$/AHBOT="YES"/' InstallFullDB.config
-    #sed --in-place 's/^PLAYERBOTS_DB=.*$/PLAYERBOTS_DB="YES"/' InstallFullDB.config
-    #sed --in-place 's/^FORCE_WAIT=.*$/FORCE_WAIT="NO"/' InstallFullDB.config
 
     sed --in-place 's/MYSQL_HOST="localhost"/MYSQL_HOST="'${mariadb_container_name}'"/' InstallFullDB.config && \
     sed --in-place 's/MYSQL_PASSWORD="mangos"/MYSQL_PASSWORD="'${mariadb_mangos_user_password}'"/' InstallFullDB.config && \
@@ -309,6 +294,7 @@ function finalise_setup () {
         mkdir "${work_dir}/full-backups"
     fi
     touch "${work_dir}/run/bin/.SETUPCOMPLETE"
+    echo_success "First Time Setup now complete!"
     echo_orangeinfo "\nPlease make any manual changes to your configurations before starting your server (configs can be found in /home/mangos/cmangos-${expansion}/run/etc within your cmangos docker volume.) if you used the environment variables to make changes you can ignore this."
     echo_orangeinfo 'When you have made your required changes you can use "docker compose up -d" again to start the server, depending on your configurations this can take some time for the server to be fully up and running especially if using playerbots..'
 }
@@ -317,10 +303,6 @@ function mariadbbackup() {
     echo_orangeinfo "Creating backup of ${expansion} database"
     local datenow 
     datenow=$(date "+%d-%m-%yT%H%M%S")
-    sed --in-place 's/user=/user="mangos"/' /etc/my.cnf
-    sed --in-place 's/password=/password='"${mariadb_mangos_user_password}"''/'' /etc/my.cnf
-    sed --in-place 's/port=/port=3306/' /etc/my.cnf
-    sed --in-place 's/host=/host='"${mariadb_container_name}"'/' /etc/my.cnf
     mariadb-dump --host "${mariadb_container_name}" --user mangos --port 3306 --password=${mariadb_mangos_user_password} \
                  --lock-tables --databases "${expansion}"characters "${expansion}"logs "${expansion}"mangos "${expansion}"realmd > "${work_dir}/db-backups/${expansion}-backup-${datenow}.sql"
     tar --absolute-names --gzip --file="${work_dir}/db-backups/${expansion}-backup-${datenow}.tar.gz" --create "${work_dir}/db-backups/${expansion}-backup-${datenow}.sql"
