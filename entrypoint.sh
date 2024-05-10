@@ -14,8 +14,6 @@ ip_address=${8} # require to be a longdecimal?
 core_commit_id=${9} # allows users to select a specific core commit to build with
 db_commit_id=${10} # allows users to select a specific core commit to build with
 dbbackups=$(echo "${11}" | tr '[:upper:]' '[:lower:]')
-dbbackups_totalcount=${12}
-fullbackups_totalcount=${13}
 
 home_dir="/home/mangos"
 work_dir="$home_dir/cmangos-$expansion"
@@ -205,7 +203,7 @@ function extractor () {
     cp --recursive "${work_dir}/run/bin/tools/." "${home_dir}/Client-Data-Copy"
     cd "${home_dir}/Client-Data-Copy"
     echo y | bash ./ExtractResources.sh
-    echo_success "Extraction of WoW Client data was successfully"
+    echo_success "Extraction of WoW Client data was successful"
 
     mv *maps "${work_dir}/run/bin"
     if [ -d "${home_dir}/Client-Data-Copy/CreatureModels" ]
@@ -219,8 +217,8 @@ function extractor () {
 }
 # update default installfulldb.config file  and add required database tables to mariadb 
 function install_database () {
-    cd "${database_dir}"
-    echo 9 | ./InstallFullDB.sh > /dev/null
+    cd "${database_dir}" && \
+    echo 9 | ./InstallFullDB.sh > /dev/null 
     echo_success "Default DB configuration file created"
 
     # Change some default values for the InstallFullDB.config file # Change AHBOT and Playerbots to ENV variable
@@ -240,6 +238,7 @@ function install_database () {
     sed --in-place 's/PLAYERBOTS_DB="NO"/PLAYERBOTS_DB="YES"/' InstallFullDB.config && \
     sed --in-place 's/FORCE_WAIT="YES"/FORCE_WAIT="NO"/' InstallFullDB.config && \
 
+    cd "${database_dir}" && \
     bash ./InstallFullDB.sh -InstallAll 'root' "${mariadb_root_password}" DeleteAll
     echo_success "Application of Database tables was successful"
     
@@ -267,11 +266,7 @@ function update_mangosdrealmd_config () {
 }
 #update the realm name and ip address as per REALMNAME and IPADDRESS Env variable
 function update_realmname_ipaddress () {
-    sed --in-place 's/user=/user="mangos"/' /etc/my.cnf
-    sed --in-place 's/password=/password='"${mariadb_mangos_user_password}"''/'' /etc/my.cnf
-    sed --in-place 's/port=/port=3306/' /etc/my.cnf
-    sed --in-place 's/host=/host='"${mariadb_container_name}"'/' /etc/my.cnf
-    mariadb --defaults-file=/etc/my.cnf \
+    mariadb --host "${mariadb_container_name}" --user mangos --port 3306 --password=${mariadb_mangos_user_password} \
             --execute='UPDATE '${expansion}'realmd.realmlist SET name="'${realm_name}'", address="'${ip_address}'";'
     echo_bold "Updated Realm Name to ${realm_name} and Realm IP address to ${ip_address}"
 }
@@ -326,8 +321,8 @@ function mariadbbackup() {
     sed --in-place 's/password=/password='"${mariadb_mangos_user_password}"''/'' /etc/my.cnf
     sed --in-place 's/port=/port=3306/' /etc/my.cnf
     sed --in-place 's/host=/host='"${mariadb_container_name}"'/' /etc/my.cnf
-    mariadb-dump --defaults-file=/etc/my.cnf \
-                    --lock-tables --databases "${expansion}"characters "${expansion}"logs "${expansion}"mangos "${expansion}"realmd > "${work_dir}/db-backups/${expansion}-backup-${datenow}.sql"
+    mariadb-dump --host "${mariadb_container_name}" --user mangos --port 3306 --password=${mariadb_mangos_user_password} \
+                 --lock-tables --databases "${expansion}"characters "${expansion}"logs "${expansion}"mangos "${expansion}"realmd > "${work_dir}/db-backups/${expansion}-backup-${datenow}.sql"
     tar --absolute-names --gzip --file="${work_dir}/db-backups/${expansion}-backup-${datenow}.tar.gz" --create "${work_dir}/db-backups/${expansion}-backup-${datenow}.sql"
     rm "${work_dir}"/db-backups/"${expansion}"-backup-*.sql
     echo_success "Database backup complete"
@@ -430,7 +425,6 @@ then
         /_/   /_/_/  /____/\__/  /_/ |_|\__,_/_/ /_/   /____/\___/\__/\__,_/ .___/                  
                                                                           /_/                        
                                                                                             \e[0m'
-
     datavalidation
     clientdatacheck_makebasedirs
     firstrun_gitclonelogic
