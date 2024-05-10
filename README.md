@@ -10,6 +10,7 @@ Well.. I wanted this for myself first and foremost as other projects I'd seen ha
 
 - Create a simple docker image that requires very little configuration to get a CMaNGOS server up and running.
 - Allow the image to be highly customisable for various use cases by allowing configuration of the image using docker environment variables i.e playerbots configurations etc.
+- Require very little maintenance as required files will be downloaded during container first time run / upgrades.
 - Keep users out of the server processes as much as possible and spending more time playing!
 - Selfishly to allow me to play The Burning Crusade as it's my favourite expansion.
 - As a fun project for myself and to allow me to collaborate with others to improve my poorly written code :)
